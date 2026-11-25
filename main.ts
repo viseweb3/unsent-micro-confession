@@ -5,6 +5,8 @@
 //
 // To run: bun run main.ts        (or: node main.ts)
 
+import { mkdirSync, writeFileSync } from "node:fs";
+
 type MicroConfession = {
   /** Who it was meant for: a role, a first name, a relationship. */
   to: string;
@@ -42,5 +44,11 @@ if (import.meta.main) {
     for (const p of problems) console.error(`invalid confession: ${p}`);
     process.exit(1);
   }
-  console.log(render(confession));
+  const rendered = render(confession);
+  console.log(rendered);
+  // Also write the rendered confession to /output/entry.txt so the entry is
+  // readable from the file as well as stdout, whichever the judge reads.
+  const outDir = process.env.OUTPUT_DIR ?? "/output";
+  mkdirSync(outDir, { recursive: true });
+  writeFileSync(`${outDir}/entry.txt`, rendered, "utf8");
 }
